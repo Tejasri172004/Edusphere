@@ -1,0 +1,972 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Dashboard</title>
+    <link rel="icon" type="image/png" href="edusphere.png" sizes="16x16" />
+    <style>
+      :root {
+        --bg: #f5f7fb;
+        --text: #0f1222;
+        --muted: #6b7280;
+        --brand: #2563eb;
+        --brand-2: #22c55e;
+        --card: #ffffff;
+
+        --sidebar: #1f2937;
+        --sidebar-accent: #0ea5e9;
+        --chip: #eef2ff;
+        --danger: #ef4444;
+      }
+      body.dark {
+        --bg: #0f172a;
+        --text: #e5e7eb;
+        --muted: #9ca3af;
+        --brand: #60a5fa;
+        --brand-2: #34d399;
+        --card: #0b1022;
+        --sidebar: #0b1324;
+        --sidebar-accent: #38bdf8;
+        --chip: #111827;
+        --danger: #f87171;
+      }
+
+      * {
+        box-sizing: border-box;
+      }
+      html,
+      body {
+        height: 100%;
+      }
+      body {
+        margin: 0;
+        font-family: "Inter", system-ui, -apple-system, Segoe UI, Roboto, Arial,
+          sans-serif;
+        background: var(--bg);
+        color: var(--text);
+        display: flex;
+      }
+
+      .sidebar {
+        width: 260px;
+        background: var(--sidebar);
+        color: #dbeafe;
+        height: 100vh;
+        position: fixed;
+        display: flex;
+        flex-direction: column;
+        border-right: 1px solid rgba(255, 255, 255, 0.06);
+      }
+      .brand {
+        padding: 20px 18px;
+        display: flex;
+        align-items: center;
+        gap: 12px;
+        border-bottom: 1px solid rgba(255, 255, 255, 0.06);
+      }
+      .brand .logo {
+        width: 40px;
+        height: 40px;
+        border-radius: 12px;
+        background: linear-gradient(135deg, var(--brand), var(--brand-2));
+        display: grid;
+        place-items: center;
+        color: white;
+        font-weight: 800;
+      }
+      .brand .t1 {
+        font-weight: 800;
+        letter-spacing: 0.5px;
+      }
+      .brand .t2 {
+        font-size: 12px;
+        color: #9ca3af;
+        margin-top: 2px;
+      }
+
+      .nav {
+        padding: 14px;
+        overflow: auto;
+        flex: 1;
+      }
+      .nav-section {
+        margin: 14px 8px 8px;
+        color: #93c5fd;
+        text-transform: uppercase;
+        font-size: 11px;
+        letter-spacing: 0.14em;
+      }
+      .nav button {
+        width: 100%;
+        background: transparent;
+        border: 0;
+        color: #e5e7eb;
+        text-align: left;
+        padding: 10px 12px;
+        border-radius: 10px;
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        cursor: pointer;
+        font-size: 15px;
+      }
+      .nav button:hover {
+        background: rgba(255, 255, 255, 0.06);
+      }
+      .logout {
+        margin: 12px;
+        background: var(--danger);
+        border: 0;
+        color: white;
+        border-radius: 10px;
+        padding: 12px;
+        cursor: pointer;
+        font-weight: 600;
+      }
+      .logout:hover {
+        opacity: 0.9;
+      }
+
+      .main {
+        margin-left: 260px;
+        flex: 1;
+        min-height: 100vh;
+        display: flex;
+        flex-direction: column;
+      }
+      header {
+        background: #1f2a3a;
+        color: white;
+        padding: 18px 22px;
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+      }
+      .welcome {
+        font-size: 26px;
+        font-weight: 800;
+        letter-spacing: 0.2px;
+      }
+      .chip {
+        background: var(--chip);
+        color: var(--brand);
+        border-radius: 999px;
+        padding: 8px 14px;
+        font-weight: 700;
+        border: 1px solid rgba(99, 102, 241, 0.15);
+        cursor: pointer;
+      }
+
+      .content {
+        padding: 22px;
+        display: grid;
+        gap: 18px;
+      }
+      .card {
+        background: var(--card);
+        border: 1px solid rgba(0, 0, 0, 0.06);
+        border-radius: 16px;
+        padding: 18px;
+        box-shadow: 0 6px 24px rgba(2, 8, 23, 0.06);
+      }
+      .hidden {
+        display: none;
+      }
+
+      .kpis {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+        gap: 16px;
+      }
+      .kpi {
+        background: linear-gradient(
+          180deg,
+          rgba(99, 102, 241, 0.12),
+          transparent
+        );
+        border-radius: 14px;
+        padding: 16px;
+        border: 1px dashed rgba(99, 102, 241, 0.25);
+      }
+      .kpi .k-title {
+        font-size: 13px;
+        color: var(--muted);
+      }
+      .kpi .k-value {
+        font-size: 24px;
+        font-weight: 800;
+        margin-top: 6px;
+      }
+
+      .profile-top {
+        display: flex;
+        align-items: center;
+        gap: 16px;
+        margin-bottom: 10px;
+      }
+      .avatar {
+        width: 84px;
+        height: 84px;
+        border-radius: 18px;
+        object-fit: cover;
+        border: 3px solid rgba(99, 102, 241, 0.35);
+      }
+      .grid-2 {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+        gap: 12px;
+      }
+      input,
+      select,
+      textarea {
+        width: 100%;
+        padding: 10px 12px;
+        border-radius: 10px;
+        border: 1px solid rgba(0, 0, 0, 0.12);
+        background: transparent;
+        color: inherit;
+      }
+      .btn {
+        background: var(--brand);
+        color: white;
+        border: 0;
+        border-radius: 10px;
+        padding: 10px 14px;
+        font-weight: 700;
+        cursor: pointer;
+      }
+      .btn.secondary {
+        background: var(--brand-2);
+      }
+      .btn.neutral {
+        background: #475569;
+      }
+
+      .chat-box {
+        height: 300px;
+        overflow: auto;
+        border: 1px solid rgba(0, 0, 0, 0.12);
+        border-radius: 12px;
+        padding: 12px;
+        background: rgba(148, 163, 184, 0.08);
+      }
+      .bubble {
+        display: inline-block;
+        padding: 8px 12px;
+        border-radius: 12px;
+        margin: 6px 0;
+        max-width: 75%;
+      }
+      .right {
+        text-align: right;
+      }
+      .b-me {
+        background: var(--brand);
+        color: white;
+      }
+      .b-ai {
+        background: #111827;
+        color: #e5e7eb;
+      }
+
+      ul.filelist {
+        list-style: none;
+        margin: 0;
+        padding: 0;
+      }
+      ul.filelist li {
+        padding: 10px;
+        border: 1px solid rgba(0, 0, 0, 0.08);
+        border-radius: 10px;
+        margin: 8px 0;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+      }
+
+      .table {
+        width: 100%;
+        border-collapse: collapse;
+      }
+      .table th,
+      .table td {
+        padding: 10px;
+        border-bottom: 1px solid rgba(0, 0, 0, 0.08);
+        text-align: left;
+      }
+      .muted {
+        color: var(--muted);
+      }
+    </style>
+  </head>
+  <body>
+    <aside class="sidebar">
+      <div>
+        <div class="brand">
+          <div class="logo">EDU</div>
+          <div>
+            <div class="t1" id="roleTitle">DASHBOARD</div>
+            <div class="t2" id="roleSub">Role</div>
+          </div>
+        </div>
+
+        <div class="nav">
+          <div class="nav-section">General</div>
+          <button onclick="showSection('home')">🏠 Overview</button>
+          <button onclick="showSection('profile')">👤 Profile</button>
+
+          <div class="nav-section" id="studentSec" class="hidden">Student</div>
+          <div id="studentMenu" class="hidden">
+            <button onclick="showSection('grades')">📊 My Grades</button>
+            <button onclick="showSection('attendance')">🗓 My Attendance</button>
+            <button onclick="showSection('assignments')">📂 Assignments</button>
+            <button onclick="showSection('ai')">🤖 Ask AI</button>
+          </div>
+
+          <div class="nav-section" id="teacherSec" class="hidden">Teacher</div>
+          <div id="teacherMenu" class="hidden">
+            <button onclick="showSection('t_grades')">✅ Post Grades</button>
+            <button onclick="showSection('t_attendance')">
+              📝 Mark Attendance
+            </button>
+            <button onclick="showSection('t_assignments')">
+              📂 Student Assignments
+            </button>
+          </div>
+
+          <div class="nav-section" id="adminSec" class="hidden">Admin</div>
+          <div id="adminMenu" class="hidden">
+            <button onclick="showSection('admin_overview')">
+              📈 Site Overview
+            </button>
+          </div>
+        </div>
+      </div>
+
+      <button class="logout" onclick="logout()">Logout</button>
+    </aside>
+
+    <main class="main">
+      <header>
+        <div class="welcome">Welcome, <span id="userName">User</span> 👋</div>
+        <button class="chip" onclick="toggleTheme()">🌙 Dark / ☀️ Light</button>
+      </header>
+
+      <section class="content">
+        <div id="home" class="card">
+          <div class="kpis">
+            <div class="kpi">
+              <div class="k-title">Total Courses</div>
+              <div class="k-value" id="kCourses">0</div>
+            </div>
+            <div class="kpi">
+              <div class="k-title">Pending Assignments</div>
+              <div class="k-value" id="kAssignments">0</div>
+            </div>
+            <div class="kpi">
+              <div class="k-title">Latest Grade</div>
+              <div class="k-value" id="kGrade">—</div>
+            </div>
+            <div class="kpi">
+              <div class="k-title">Attendance</div>
+              <div class="k-value" id="kAttendance">—</div>
+            </div>
+          </div>
+        </div>
+
+        <div id="profile" class="card hidden">
+          <h2>My Profile</h2>
+          <div class="profile-top">
+            <img id="profileImage" class="avatar" src="" alt="avatar" />
+            <div>
+              <input
+                type="file"
+                accept="image/*"
+                onchange="uploadProfilePic(event)"
+              />
+              <div class="muted" style="margin-top: 6px">PNG/JPG up to 2MB</div>
+            </div>
+          </div>
+
+          <div class="grid-2">
+            <div>
+              <label>Name</label>
+              <input id="p_name" placeholder="Your name" />
+            </div>
+            <div>
+              <label>Email</label>
+              <input id="p_email" placeholder="your@email.com" />
+            </div>
+            <div class="role-student hidden">
+              <label>Course</label>
+              <input id="p_course" placeholder="e.g., B.Tech" />
+            </div>
+            <div class="role-student hidden">
+              <label>Branch</label>
+              <input id="p_branch" placeholder="e.g., CSE" />
+            </div>
+            <div class="role-teacher hidden">
+              <label>Department</label>
+              <input id="p_dept" placeholder="e.g., Computer Science" />
+            </div>
+            <div>
+              <label>Phone</label>
+              <input id="p_phone" placeholder="+91-xxxxxxxxxx" />
+            </div>
+          </div>
+          <div style="margin-top: 12px; display: flex; gap: 10px">
+            <button class="btn" onclick="saveProfile()">💾 Save Changes</button>
+            <button class="btn neutral" onclick="resetProfile()">
+              ↺ Reset
+            </button>
+          </div>
+        </div>
+
+        <div id="grades" class="card hidden">
+          <h2>My Grades</h2>
+          <div id="gradesContent" class="muted">No grades available yet ❌</div>
+        </div>
+
+        <div id="attendance" class="card hidden">
+          <h2>My Attendance</h2>
+          <div id="attendanceContent" class="muted">
+            No attendance record yet ❌
+          </div>
+        </div>
+
+        <div id="assignments" class="card hidden">
+          <h2>Assignments</h2>
+          <div class="grid-2">
+            <div>
+              <label>Upload your assignment</label>
+              <input
+                type="file"
+                id="assignmentFile"
+                accept=".pdf,.doc,.docx,.txt,.ppt,.pptx"
+              />
+              <button class="btn secondary" onclick="uploadAssignment()">
+                ⬆️ Upload
+              </button>
+            </div>
+            <div>
+              <label class="muted">Notes (optional)</label>
+              <textarea
+                id="assignmentNote"
+                rows="3"
+                placeholder="Any comments for the teacher..."
+              ></textarea>
+            </div>
+          </div>
+          <h3 style="margin-top: 14px">📄 Uploaded</h3>
+          <ul id="assignmentList" class="filelist"></ul>
+        </div>
+
+        <div id="ai" class="card hidden">
+          <h2>Ask AI</h2>
+          <div class="chat-box" id="chatBox"></div>
+          <div style="display: flex; gap: 10px; margin-top: 10px">
+            <input id="chatInput" placeholder="Ask your doubt…" />
+            <button class="btn" onclick="sendMessage()">Send</button>
+          </div>
+        </div>
+
+        <div id="t_grades" class="card hidden">
+          <h2>Post Grades</h2>
+          <div class="grid-2">
+            <div>
+              <label>Student Email</label>
+              <input id="tg_email" placeholder="student@email.com" />
+            </div>
+            <div>
+              <label>Grade</label>
+              <input id="tg_grade" placeholder="e.g., A+" />
+            </div>
+          </div>
+          <button class="btn" style="margin-top: 10px" onclick="postGrades()">
+            Save Grade
+          </button>
+          <h3 style="margin-top: 18px">Recent Grades</h3>
+          <table class="table" id="gradesTable">
+            <thead>
+              <tr>
+                <th>Student</th>
+                <th>Grade</th>
+                <th>Actions</th>
+              </tr>
+            </thead>
+            <tbody></tbody>
+          </table>
+        </div>
+
+        <div id="t_attendance" class="card hidden">
+          <h2>Mark Attendance</h2>
+          <div class="grid-2">
+            <div>
+              <label>Student Email</label>
+              <input id="ta_email" placeholder="student@email.com" />
+            </div>
+            <div>
+              <label>Status</label>
+              <select id="ta_status">
+                <option>Present</option>
+                <option>Absent</option>
+              </select>
+            </div>
+          </div>
+          <button
+            class="btn"
+            style="margin-top: 10px"
+            onclick="postAttendance()"
+          >
+            Save Attendance
+          </button>
+          <h3 style="margin-top: 18px">Recent Attendance</h3>
+          <table class="table" id="attTable">
+            <thead>
+              <tr>
+                <th>Student</th>
+                <th>Status</th>
+                <th>Actions</th>
+              </tr>
+            </thead>
+            <tbody></tbody>
+          </table>
+        </div>
+
+        <div id="t_assignments" class="card hidden">
+          <h2>Student Assignments</h2>
+          <div id="allAssignments" class="muted">No submissions yet.</div>
+        </div>
+
+        <div id="admin_overview" class="card hidden">
+          <h2>Site Overview</h2>
+          <div class="grid-2">
+            <div class="kpi">
+              <div class="k-title">Students</div>
+              <div class="k-value">120</div>
+            </div>
+            <div class="kpi">
+              <div class="k-title">Teachers</div>
+              <div class="k-value">15</div>
+            </div>
+            <div class="kpi">
+              <div class="k-title">Admins</div>
+              <div class="k-value">2</div>
+            </div>
+          </div>
+        </div>
+      </section>
+    </main>
+
+    <script>
+      const currentUser = JSON.parse(
+        localStorage.getItem("currentUser") || "{}"
+      );
+      if (!currentUser.role) {
+        window.location.href = "login.html";
+      }
+
+      const defaultAvatars = {
+        student:
+          "https://img.icons8.com/?size=100&id=tZuAOUGm9AuS&format=png&color=000000",
+        teacher:
+          "https://api.dicebear.com/7.x/bottts/svg?seed=Teacher&eyes=happy",
+        admin:
+          "https://api.dicebear.com/7.x/bottts/svg?seed=Admin&glasses=round",
+      };
+
+      const role = currentUser.role || "student";
+      document.getElementById("userName").textContent =
+        currentUser.name || "User";
+      document.getElementById("roleTitle").textContent =
+        role.toUpperCase() + " DASHBOARD";
+      document.getElementById("roleSub").textContent =
+        role.charAt(0).toUpperCase() + role.slice(1);
+
+      if (role === "student") {
+        document.getElementById("studentMenu").classList.remove("hidden");
+        document.getElementById("studentSec").classList.remove("hidden");
+      }
+      if (role === "teacher") {
+        document.getElementById("teacherMenu").classList.remove("hidden");
+        document.getElementById("teacherSec").classList.remove("hidden");
+      }
+      if (role === "admin") {
+        document.getElementById("adminMenu").classList.remove("hidden");
+        document.getElementById("adminSec").classList.remove("hidden");
+      }
+
+      if (localStorage.getItem("theme") === "dark")
+        document.body.classList.add("dark");
+      function toggleTheme() {
+        document.body.classList.toggle("dark");
+        localStorage.setItem(
+          "theme",
+          document.body.classList.contains("dark") ? "dark" : "light"
+        );
+      }
+
+      function logout() {
+        localStorage.removeItem("currentUser");
+        window.location.href = "login.html";
+      }
+
+      function showSection(id) {
+        document
+          .querySelectorAll(".content .card")
+          .forEach((c) => c.classList.add("hidden"));
+        document.getElementById(id).classList.remove("hidden");
+        if (id === "t_assignments") loadAllAssignments();
+        if (id === "t_grades") renderGradesTable();
+        if (id === "t_attendance") renderAttendanceTable();
+      }
+
+      function refreshKPIs() {
+        const allAssignments = JSON.parse(
+          localStorage.getItem("assignments") || "{}"
+        );
+        const mine = allAssignments[currentUser.email] || [];
+        document.getElementById("kAssignments").textContent = mine.length;
+
+        const g = localStorage.getItem("grade_" + (currentUser.email || ""));
+        document.getElementById("kGrade").textContent = g || "—";
+
+        const a = localStorage.getItem(
+          "attendance_" + (currentUser.email || "")
+        );
+        document.getElementById("kAttendance").textContent = a || "—";
+
+        const courses = currentUser.course ? 1 : 0;
+        document.getElementById("kCourses").textContent = courses;
+      }
+
+      function loadProfile() {
+        document.getElementById("profileImage").src =
+          currentUser.photo || defaultAvatars[role] || defaultAvatars.student;
+        document.getElementById("p_name").value = currentUser.name || "";
+        document.getElementById("p_email").value = currentUser.email || "";
+        document.getElementById("p_phone").value = currentUser.phone || "";
+        if (role === "student") {
+          document
+            .querySelectorAll(".role-student")
+            .forEach((x) => x.classList.remove("hidden"));
+          document.getElementById("p_course").value = currentUser.course || "";
+          document.getElementById("p_branch").value = currentUser.branch || "";
+        }
+        if (role === "teacher") {
+          document
+            .querySelectorAll(".role-teacher")
+            .forEach((x) => x.classList.remove("hidden"));
+          document.getElementById("p_dept").value =
+            currentUser.department || "";
+        }
+      }
+      function saveProfile() {
+        currentUser.name = document.getElementById("p_name").value.trim();
+        currentUser.email = document.getElementById("p_email").value.trim();
+        currentUser.phone = document.getElementById("p_phone").value.trim();
+        if (role === "student") {
+          currentUser.course = document.getElementById("p_course").value.trim();
+          currentUser.branch = document.getElementById("p_branch").value.trim();
+        }
+        if (role === "teacher") {
+          currentUser.department = document
+            .getElementById("p_dept")
+            .value.trim();
+        }
+        localStorage.setItem("currentUser", JSON.stringify(currentUser));
+        document.getElementById("userName").textContent =
+          currentUser.name || "User";
+        alert("✅ Profile updated");
+        refreshKPIs();
+      }
+      function resetProfile() {
+        loadProfile();
+      }
+      function uploadProfilePic(e) {
+        const file = e.target.files[0];
+        if (!file) return;
+        const reader = new FileReader();
+        reader.onload = (ev) => {
+          currentUser.photo = ev.target.result;
+          localStorage.setItem("currentUser", JSON.stringify(currentUser));
+          document.getElementById("profileImage").src = ev.target.result;
+        };
+        reader.readAsDataURL(file);
+      }
+
+     async function loadStudentPanels() {
+  try {
+    const res = await fetch(`http://localhost:5000/api/grades/${currentUser.email}`);
+    const data = await res.json();
+
+    document.getElementById("gradesContent").textContent =
+      data.length ? "Your Grade: " + data[0].grade : "No grades available";
+
+  } catch (err) {
+    console.error(err);
+    document.getElementById("gradesContent").textContent =
+      "Error loading grades";
+  }
+}
+
+      function uploadAssignment() {
+        const f = document.getElementById("assignmentFile").files[0];
+        if (!f) {
+          alert("Please choose a file.");
+          return;
+        }
+        const note = document.getElementById("assignmentNote").value.trim();
+        const reader = new FileReader();
+        reader.onload = (ev) => {
+          const all = JSON.parse(localStorage.getItem("assignments") || "{}");
+          const key = currentUser.email || "unknown";
+          all[key] = all[key] || [];
+          all[key].push({
+            name: f.name,
+            data: ev.target.result,
+            note,
+            time: new Date().toISOString(),
+          });
+          localStorage.setItem("assignments", JSON.stringify(all));
+          document.getElementById("assignmentFile").value = "";
+          document.getElementById("assignmentNote").value = "";
+          loadMyAssignments();
+          refreshKPIs();
+          alert("Uploaded");
+        };
+        reader.readAsDataURL(f);
+      }
+      function loadMyAssignments() {
+        const ul = document.getElementById("assignmentList");
+        ul.innerHTML = "";
+        const all = JSON.parse(localStorage.getItem("assignments") || "{}");
+        const list = all[currentUser.email || ""] || [];
+        list.forEach((a, idx) => {
+          const li = document.createElement("li");
+          li.innerHTML = `
+          <div>
+            <strong>${a.name}</strong>
+            <div class="muted" style="font-size:12px">${new Date(
+              a.time
+            ).toLocaleString()} ${a.note ? "· " + a.note : ""}</div>
+          </div>
+          <div style="display:flex;gap:8px">
+            <a class="btn" style="padding:6px 10px;text-decoration:none" href="${
+              a.data
+            }" download="${a.name}">Download</a>
+            <button class="btn neutral" style="padding:6px 10px" onclick="deleteMyAssignment(${idx})">Delete</button>
+          </div>`;
+          ul.appendChild(li);
+        });
+      }
+      function deleteMyAssignment(index) {
+        const all = JSON.parse(localStorage.getItem("assignments") || "{}");
+        const key = currentUser.email || "";
+        if (!all[key]) return;
+        all[key].splice(index, 1);
+        localStorage.setItem("assignments", JSON.stringify(all));
+        loadMyAssignments();
+        refreshKPIs();
+      }
+
+      function loadAllAssignments() {
+        const wrap = document.getElementById("allAssignments");
+        const all = JSON.parse(localStorage.getItem("assignments") || "{}");
+        if (Object.keys(all).length === 0) {
+          wrap.textContent = "No submissions yet.";
+          return;
+        }
+        wrap.innerHTML = "";
+        for (const email in all) {
+          const box = document.createElement("div");
+          box.className = "card";
+          box.style.background = "transparent";
+          box.style.border = "1px dashed rgba(99,102,241,.25)";
+          box.style.marginBottom = "12px";
+          const list = all[email];
+          let inner = `<h3>👩‍🎓 ${email}</h3><ul class="filelist">`;
+          list.forEach((a, i) => {
+            inner += `
+            <li>
+              <div>
+                <strong>${a.name}</strong>
+                <div class="muted" style="font-size:12px">${new Date(
+                  a.time
+                ).toLocaleString()} ${a.note ? "· " + a.note : ""}</div>
+              </div>
+              <div style="display:flex;gap:8px">
+                <a class="btn" style="padding:6px 10px;text-decoration:none" href="${
+                  a.data
+                }" download="${a.name}">Download</a>
+              </div>
+            </li>`;
+          });
+          inner += "</ul>";
+          box.innerHTML = inner;
+          wrap.appendChild(box);
+        }
+      }
+
+     async function postGrades() {
+  const email = document.getElementById("tg_email").value.trim();
+  const grade = document.getElementById("tg_grade").value.trim();
+
+  if (!email || !grade) {
+    alert("Enter email and grade");
+    return;
+  }
+
+  try {
+    const res = await fetch("http://localhost:5000/api/grades/add", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json"
+      },
+      body: JSON.stringify({
+        studentEmail: email,
+        grade: grade,
+        teacherEmail: currentUser.email
+      })
+    });
+
+    const data = await res.json();
+
+    alert(data.msg);
+
+    document.getElementById("tg_email").value = "";
+    document.getElementById("tg_grade").value = "";
+
+  } catch (err) {
+    console.error(err);
+    alert("Error saving grade");
+  }
+}
+     async function renderGradesTable() {
+  const tbody = document.querySelector("#gradesTable tbody");
+  tbody.innerHTML = "";
+
+  try {
+    const res = await fetch("http://localhost:5000/api/grades");
+    const data = await res.json();
+
+    data.forEach((g) => {
+      const tr = document.createElement("tr");
+
+      tr.innerHTML = `
+        <td>${g.studentEmail}</td>
+        <td>${g.grade}</td>
+        <td>${g.teacherEmail}</td>
+      `;
+
+      tbody.appendChild(tr);
+    });
+
+  } catch (err) {
+    console.error(err);
+  }
+}
+      function saveGradeInline(email, btn) {
+        const inp = btn.parentElement.parentElement.querySelector("input");
+        localStorage.setItem("grade_" + email, inp.value.trim());
+        alert(" Updated");
+      }
+      function deleteGrade(email) {
+        localStorage.removeItem("grade_" + email);
+        renderGradesTable();
+      }
+
+      function postAttendance() {
+        const email = document.getElementById("ta_email").value.trim();
+        const status = document.getElementById("ta_status").value;
+        if (!email) {
+          alert("Enter email");
+          return;
+        }
+        localStorage.setItem("attendance_" + email, status);
+        document.getElementById("ta_email").value = "";
+        renderAttendanceTable();
+        alert(" Attendance saved");
+      }
+      function renderAttendanceTable() {
+        const tbody = document.querySelector("#attTable tbody");
+        tbody.innerHTML = "";
+        Object.keys(localStorage)
+          .filter((k) => k.startsWith("attendance_"))
+          .forEach((key) => {
+            const email = key.replace("attendance_", "");
+            const status = localStorage.getItem(key);
+            const tr = document.createElement("tr");
+            tr.innerHTML = `
+          <td>${email}</td>
+          <td>
+            <select data-email="${email}">
+              <option ${status === "Present" ? "selected" : ""}>Present</option>
+              <option ${status === "Absent" ? "selected" : ""}>Absent</option>
+            </select>
+          </td>
+          <td>
+            <button class="btn" style="padding:6px 10px" onclick="saveAttendanceInline('${email}', this)">Save</button>
+            <button class="btn neutral" style="padding:6px 10px" onclick="deleteAttendance('${email}')">Delete</button>
+          </td>`;
+            tbody.appendChild(tr);
+          });
+      }
+      function saveAttendanceInline(email, btn) {
+        const sel = btn.parentElement.parentElement.querySelector("select");
+        localStorage.setItem("attendance_" + email, sel.value);
+        alert(" Updated");
+      }
+      function deleteAttendance(email) {
+        localStorage.removeItem("attendance_" + email);
+        renderAttendanceTable();
+      }
+
+      function sendMessage() {
+        const input = document.getElementById("chatInput");
+        const chat = document.getElementById("chatBox");
+        const msg = input.value.trim();
+        if (!msg) return;
+        const me = document.createElement("div");
+        me.className = "right";
+        me.innerHTML = `<span class="bubble b-me">${msg}</span>`;
+        chat.appendChild(me);
+        input.value = "";
+        chat.scrollTop = chat.scrollHeight;
+        setTimeout(() => {
+          const a = document.createElement("div");
+          a.innerHTML = `<span class="bubble b-ai">${getAIResponse(
+            msg
+          )}</span>`;
+          chat.appendChild(a);
+          chat.scrollTop = chat.scrollHeight;
+        }, 500);
+      }
+      function getAIResponse(q) {
+        q = q.toLowerCase();
+        if (q.includes("derivative"))
+          return "d/dx (x²) = 2x. The derivative is the instantaneous rate of change.";
+        if (q.includes("integral"))
+          return "∫ x dx = x²/2 + C. An integral accumulates area under the curve.";
+        if (q.includes("python"))
+          return "Example:\n```python\nfor i in range(3):\n    print(i)\n```";
+        return "That's a good question! Try breaking it into smaller parts. I can give formulas or examples if you add keywords like 'derivative', 'integral', or 'python'.";
+      }
+
+      function init() {
+        loadProfile();
+        if (role === "student") {
+          loadStudentPanels();
+          loadMyAssignments();
+        }
+        if (role === "teacher") {
+          renderGradesTable();
+          renderAttendanceTable();
+        }
+        refreshKPIs();
+      }
+      init();
+    </script>
+  </body>
+</html>
